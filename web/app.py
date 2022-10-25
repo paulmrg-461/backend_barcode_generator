@@ -116,7 +116,9 @@ def download_template():
             buf = io.BytesIO(fh.read())
             return send_file(
                 buf,
-                mimetype='application/xlsx'
+                mimetype='application/xlsx',
+                as_attachment=True,
+                attachment_filename="Template.xlsx"
             )
         
         # return "done"
