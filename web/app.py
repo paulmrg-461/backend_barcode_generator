@@ -25,9 +25,8 @@ def generate_name(name):
 @app.route('/api/upload-excel-file', methods = ['GET','POST'])
 @cross_origin()
 def upload_excel_file():
-    print(request, file=sys.stderr)
-    file = request.files['file']  
-    print(file, file=sys.stderr)
+    file = request.files['file']
+    company_name = request.args.get('company_name')  
     try:
         dataframe = pd.read_excel(
             file,
@@ -36,8 +35,6 @@ def upload_excel_file():
             keep_default_na=True
         )
         dataframe.dropna(how='all', inplace=True)
-
-        print(dataframe.head(), file=sys.stderr)
 
         barcode_list = []
         name_list = []
@@ -63,27 +60,25 @@ def upload_excel_file():
             draw = ImageDraw.Draw(new_image)
 
             # Define custom text size and font
-            # h1_size = 24
-            # h2_size = 28
-            # h3_size = 12
-            # footer_size = 18
+            h1_size = 24
+            h2_size = 28
+            h3_size = 12
+            footer_size = 18
 
-            # h1_font = ImageFont.truetype("Chalkduster.ttf", h1_size)
-            # print('toleada5', file=sys.stderr)
-            # h2_font = ImageFont.truetype("Chalkduster.ttf", h2_size)
-            # h3_font = ImageFont.truetype("Chalkduster.ttf", h3_size)
-            # footer_font = ImageFont.truetype("Chalkduster.ttf", footer_size)
+            h1_font = ImageFont.truetype("/home/files/fonts/DejaVuSans-Bold.ttf", h1_size)
+            h2_font = ImageFont.truetype("/home/files/fonts/Ubuntu-C.ttf", h2_size)
+            h3_font = ImageFont.truetype("/home/files/fonts/Ubuntu-C.ttf", h3_size)
+            footer_font = ImageFont.truetype("/home/files/fonts/UbuntuMono-R.ttf", footer_size)
 
             # Define custom text
-            company_name = 'CENTRAL DE ALUMINIOS DEL VALLE'
             product_type = f'{name_list[i]}'
             center_product_type = (barcode_image.width / 2) - len(product_type) * 5
             center_barcode_value = (barcode_image.width / 2) - len(f"{bc}") * 8
 
             # Draw text on picture
-            draw.text( (l_r_margin, 0), company_name, fill=(0, 0, 0), )
-            draw.text( (center_product_type, (20)), product_type, fill=(0, 0, 0), )
-            draw.text( (center_barcode_value, (new_height - 30)), f"{bc}", fill=(0, 0, 0), )
+            draw.text( (l_r_margin, 0), company_name, fill=(0, 0, 0), font=h3_font)
+            draw.text( (center_product_type, (20)), product_type, fill=(0, 0, 0), font=footer_font)
+            draw.text( (center_barcode_value, (new_height - 30)), f"{bc}", fill=(0, 0, 0), font=h1_font)
             image_list.append(new_image)
 
         local_path = "/home/files/BarcodeList.pdf"
@@ -138,4 +133,4 @@ def welcome():
     return 'Barcode Generator Rest API!'  
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5050)
+    app.run(host='0.0.0.0', port=1616)
